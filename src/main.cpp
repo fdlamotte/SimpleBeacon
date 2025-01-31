@@ -90,7 +90,7 @@ StdRNG fast_rng;
 SimpleMeshTables tables;
 MyMesh the_mesh(*new WRAPPER_CLASS(radio, board), *new ArduinoMillis(), fast_rng, *new VolatileRTCClock(), tables);
 
-unsigned long nextAnnounce;
+unsigned long nextCheck;
 
 void halt() {
   while (1) ;
@@ -166,12 +166,12 @@ void setup() {
 
   Serial.println("Mesh started");
 
-  nextAnnounce = 0;
+  nextCheck = 0;
 
 }
 
 void loop() {
-  if (the_mesh.millisHasNowPassed(nextAnnounce)) {
+  if (the_mesh.millisHasNowPassed(nextCheck)) {
     char data [30];
 	  double lat = 4.774;
 	  double lon = -3.385;
@@ -193,7 +193,7 @@ void loop() {
     mesh::Packet* pkt = the_mesh.createAdvert(the_mesh.self_id, (const uint8_t *)data, strlen(data));
     if (pkt) the_mesh.sendFlood(pkt);
 
-    nextAnnounce = the_mesh.futureMillis(30000);  // announce every 30 seconds (test only, don't do in production!)
+    nextCheck = the_mesh.futureMillis(30000);  // announce every 30 seconds (test only, don't do in production!)
   }
 
   the_mesh.loop();
